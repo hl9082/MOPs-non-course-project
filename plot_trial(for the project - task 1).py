@@ -12,7 +12,9 @@ def plot_2_graphs(lower_x,upper_x,lower_y,upper_y,width,height,limit,angle):
     # Generate random data for the first scatter plot
     x1 = np.random.rand(limit)
     y1 = np.random.rand(limit)
-
+    
+    original_points=np.array([x1,y1])
+    
     plt.figure(figsize=(width, height))
 
     plt.subplot(1, 2, 1)
@@ -31,7 +33,7 @@ def plot_2_graphs(lower_x,upper_x,lower_y,upper_y,width,height,limit,angle):
     [np.sin(theta), np.cos(theta)]])
 
     # Apply the rotation matrix to the data
-    rotated_data = np.dot(rotation_matrix, np.array([x1, y1]))
+    rotated_data = np.dot(rotation_matrix, original_points)
 
     x2 = rotated_data[lower_x, :upper_x]
     y2 = rotated_data[lower_y, :upper_y]
@@ -46,13 +48,17 @@ def plot_2_graphs(lower_x,upper_x,lower_y,upper_y,width,height,limit,angle):
     plt.tight_layout()
     plt.show()
     
-    for mat in [x1,y1]:
-        original_point = mat[0].reshape(1,-1)
-        dist=cdist(original_point,rotated_data,'euclidean')
-        closest_index=np.argmin(dist)
-        corresponding_rotated_point=rotated_data[closest_index]
-        print(f"Original point: {original_point.flatten()}")
-        print(f"Corresponding rotated point: {corresponding_rotated_point}")
+    # Draw lines connecting each original point to its corresponding rotated point
+    for i in range(len(original_points)):
+        plt.plot([original_points[i, 0], rotated_data[i, 0]],
+                 [original_points[i, 1], rotated_data[i, 1]], 'k-')
+        # 'k-' specifies a solid black line
+    #plt.legend()
+    plt.show()
+
+# Print the matches
+    for i, (orig, rot) in enumerate(zip(original_points, rotated_data)):
+        print(f"Original point {i}: {orig} -> Corresponding rotated point: {rot}")
     
     
 def main():
