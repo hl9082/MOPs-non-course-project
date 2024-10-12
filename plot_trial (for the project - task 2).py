@@ -67,8 +67,11 @@ def best_fit_transform(A, B):
 
 def main():
 # Example usage with random data sets
-    np.random.seed(0)
-    A = np.random.rand(1000, 2)  # Large data set
+    seed=int(input("Enter a seed here: "))
+    np.random.seed(seed)
+    rows=int(input("Enter the number of rows: "))
+    cols=int(input("Enter the number of columns: "))
+    A = np.random.rand(rows, cols)  # Large data set
     B = A + np.random.normal(0, 0.1, A.shape)
 
 # Apply ICP
