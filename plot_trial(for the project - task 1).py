@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 from scipy.spatial.distance import cdist
+#from sklearn.neighbors import NearestNeighbors 
 
 def plot_2_graphs(lower_x,upper_x,lower_y,upper_y,width,height,limit,angle):
     
@@ -35,8 +36,11 @@ def plot_2_graphs(lower_x,upper_x,lower_y,upper_y,width,height,limit,angle):
     # Apply the rotation matrix to the data
     rotated_data = np.dot(rotation_matrix, original_points)
 
-    x2 = rotated_data[lower_x, :upper_x]
-    y2 = rotated_data[lower_y, :upper_y]
+    #x2 = rotated_data[lower_x, :upper_x]
+    #y2 = rotated_data[lower_y, :upper_y]
+    
+    x2 = rotated_data[0, :]
+    y2 = rotated_data[0, :]
 
     plt.subplot(1, 2, 2)
     plt.scatter(x2, y2)
@@ -47,7 +51,7 @@ def plot_2_graphs(lower_x,upper_x,lower_y,upper_y,width,height,limit,angle):
     plt.grid(True)
     plt.tight_layout()
     plt.show()
-    
+    ''' 
     # Draw lines connecting each original point to its corresponding rotated point
     for i in range(len(original_points)):
         plt.plot([original_points[i, 0], rotated_data[i, 0]],
@@ -59,7 +63,8 @@ def plot_2_graphs(lower_x,upper_x,lower_y,upper_y,width,height,limit,angle):
 # Print the matches
     for i, (orig, rot) in enumerate(zip(original_points, rotated_data)):
         print(f"Original point {i}: {orig} -> Corresponding rotated point: {rot}")
-    
+   '''
+
     
 def main():
     lower_x=int(input("Enter the lower x limit: "))
