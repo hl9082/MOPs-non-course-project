@@ -5,9 +5,9 @@ import math
 from scipy.spatial.distance import cdist
 #from sklearn.neighbors import NearestNeighbors 
 
-def plot_2_graphs(lower_x,upper_x,lower_y,upper_y,width,height,limit,angle):
+def plot_2_graphs(lower_x,lower_y,width,height,limit,angle):
     
-    if lower_x > upper_x or lower_y>upper_y:
+    if lower_x != 0 or lower_y!=1:
         print("The range is invalid!")
         
     # Generate random data for the first scatter plot
@@ -39,8 +39,8 @@ def plot_2_graphs(lower_x,upper_x,lower_y,upper_y,width,height,limit,angle):
     #x2 = rotated_data[lower_x, :upper_x]
     #y2 = rotated_data[lower_y, :upper_y]
     
-    x2 = rotated_data[0, :]
-    y2 = rotated_data[0, :]
+    x2 = rotated_data[0, :] #it goes all columns in the row.
+    y2 = rotated_data[1, :]
 
     plt.subplot(1, 2, 2)
     plt.scatter(x2, y2)
@@ -68,13 +68,13 @@ def plot_2_graphs(lower_x,upper_x,lower_y,upper_y,width,height,limit,angle):
     
 def main():
     lower_x=int(input("Enter the lower x limit: "))
-    upper_x=int(input("Enter the upper x limit: "))
+    #upper_x=int(input("Enter the upper x limit: "))
     lower_y=int(input("Enter the lower y limit: "))
-    upper_y=int(input("Enter the upper y limit: "))
+    #upper_y=int(input("Enter the upper y limit: "))
     width=int(input("Enter the width: "))
     height=int(input("Enter the height : "))
     limit=int(input("Enter the data limit: "))
     angle=float(input("Enter the angle to rotate: "))
-    plot_2_graphs(lower_x,upper_x,lower_y,upper_y,width,height,limit,angle)
+    plot_2_graphs(lower_x,lower_y,width,height,limit,angle)
 if __name__=='__main__':
     main()
