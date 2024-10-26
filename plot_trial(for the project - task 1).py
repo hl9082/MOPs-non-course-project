@@ -1,9 +1,28 @@
-import random
-import matplotlib.pyplot as plt
-import numpy as np
-import math
-from scipy.spatial import cKDTree
-#from sklearn.neighbors import NearestNeighbors 
+'''
+@file plot_trial(for the project - task 1).py
+@description This is where we plot 2 scatter plots, with one being the rotated version of the other,
+and we also apply ICP to find the distance between each point in the 1st graph with its correspondance.
+@author Huy Le (hl9082)
+@author Jorge (please enter your full name and RIT username)
+@author Eric (please enter your full name and RIT username)
+'''
+import random #for randomization
+import matplotlib.pyplot as plt #for plotting
+import numpy as np #for matrix operations
+import math #for abs function
+from scipy.spatial import cKDTree #to optimize ICP using KDTree to find nearest neighbor
+
+'''
+@brief Plot 2 scatter plots, with the 2nd being the rotated version of the 1st. As well as,
+printing out necessary matrices, alongside the pairs of original-rotated points along with distances in-between.
+@param lower_x lower x limit
+@param lower_y lower y limit
+@param width width of the screen.
+@param height height of the screen.
+@param limit the number of points.
+@param angle the angle to rotate.
+@pre x must be 0, y must be 1.
+'''
 
 def plot_2_graphs(lower_x,lower_y,width,height,limit,angle):
     
@@ -36,8 +55,7 @@ def plot_2_graphs(lower_x,lower_y,width,height,limit,angle):
     # Apply the rotation matrix to the data
     rotated_data = np.dot(rotation_matrix, original_points)
 
-    #x2 = rotated_data[lower_x, :upper_x]
-    #y2 = rotated_data[lower_y, :upper_y]
+    
     
     x2 = rotated_data[lower_x, :] #it goes all columns in the row.
     y2 = rotated_data[lower_y, :]
@@ -52,19 +70,6 @@ def plot_2_graphs(lower_x,lower_y,width,height,limit,angle):
     plt.tight_layout()
     plt.show()
     aligned_points, rotation_matrix, translation_vector,indices,distances = icp(original_points, rotated_data)
-    ''' 
-    # Draw lines connecting each original point to its corresponding rotated point
-    for i in range(len(original_points)):
-        plt.plot([original_points[i, 0], rotated_data[i, 0]],
-                 [original_points[i, 1], rotated_data[i, 1]], 'k-')
-        # 'k-' specifies a solid black line
-    #plt.legend()
-    plt.show()
-
-# Print the matches
-    for i, (orig, rot) in enumerate(zip(original_points, rotated_data)):
-        print(f"Original point {i}: {orig} -> Corresponding rotated point: {rot}")
-   '''
     print("Original Points:\n",original_points)
     print("Rotated data:\n",rotated_data)
     print("Rotation matrix:\n",rotation_matrix)
@@ -131,7 +136,9 @@ def icp(source, target, max_iterations=100, tolerance=1e-6):
     return source,R,t,indices,distances
      
 
-    
+'''
+Where we implement everything, with the inputted necessary data.
+'''
 def main():
     lower_x=int(input("Enter the lower x limit: "))
     #upper_x=int(input("Enter the upper x limit: "))
