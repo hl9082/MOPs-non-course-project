@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt #for plotting
 import numpy as np #for matrix operations
 import math #for abs function
 from scipy.spatial import cKDTree #to optimize ICP using KDTree to find nearest neighbor
+import time #for time measurement
 
 '''
 @brief Plot 2 scatter plots, with the 2nd being the rotated version of the 1st. As well as,
@@ -148,6 +149,11 @@ def main():
     height=int(input("Enter the height : "))
     limit=int(input("Enter the data limit: "))
     angle=float(input("Enter the angle to rotate: "))
+    start_time = time.time()  # Start timing
     plot_2_graphs(lower_x,lower_y,width,height,limit,angle)
+    end_time = time.time()  # Start timing
+    execution_time = end_time - start_time  # Calculate execution time
+    print(f"Execution Time: {execution_time:.6f} seconds")
+
 if __name__=='__main__':
     main()
