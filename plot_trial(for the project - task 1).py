@@ -2,7 +2,7 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-from scipy.spatial.distance import cdist
+from scipy.spatial import cKDTree
 #from sklearn.neighbors import NearestNeighbors 
 
 def plot_2_graphs(lower_x,lower_y,width,height,limit,angle):
@@ -39,8 +39,8 @@ def plot_2_graphs(lower_x,lower_y,width,height,limit,angle):
     #x2 = rotated_data[lower_x, :upper_x]
     #y2 = rotated_data[lower_y, :upper_y]
     
-    x2 = rotated_data[0, :] #it goes all columns in the row.
-    y2 = rotated_data[1, :]
+    x2 = rotated_data[lower_x, :] #it goes all columns in the row.
+    y2 = rotated_data[lower_y, :]
 
     plt.subplot(1, 2, 2)
     plt.scatter(x2, y2)
@@ -51,6 +51,7 @@ def plot_2_graphs(lower_x,lower_y,width,height,limit,angle):
     plt.grid(True)
     plt.tight_layout()
     plt.show()
+    aligned_points, rotation_matrix, translation_vector,indices,distances = icp(original_points, rotated_data)
     ''' 
     # Draw lines connecting each original point to its corresponding rotated point
     for i in range(len(original_points)):
@@ -64,6 +65,61 @@ def plot_2_graphs(lower_x,lower_y,width,height,limit,angle):
     for i, (orig, rot) in enumerate(zip(original_points, rotated_data)):
         print(f"Original point {i}: {orig} -> Corresponding rotated point: {rot}")
    '''
+    print("Original Points:\n",original_points)
+    print("Rotated data:\n",rotated_data)
+    print("Rotation matrix:\n",rotation_matrix)
+    print("Translation vector:\n",translation_vector)
+    
+    for i in range(len(original_points)):
+        print(f"Original Point {original_points[i]} -> Aligned Point {rotated_data[indices[i]]}, Distance: {distances[i]:.4f}")
+
+def icp(source, target, max_iterations=100, tolerance=1e-6):
+    """
+    Apply the Iterative Closest Point algorithm to align the source points to the target points.
+
+    Parameters:
+        source (numpy.ndarray): Original scatterplot points (NxD array).
+        target (numpy.ndarray): Rotated scatterplot points (NxD array).
+        max_iterations (int): Maximum number of iterations.
+        tolerance (float): Tolerance for convergence.
+
+    Returns:
+        numpy.ndarray: Aligned source points.
+        numpy.ndarray: Rotation matrix.
+        numpy.ndarray: Translation vector.
+    """
+    for i in range(max_iterations):
+         # Step 1: Find the closest points in the target for each point in the source
+         tree=cKDTree(target)
+         distances,indices=tree.query(source)
+    
+        #Step 2: Calculate the centroid of source and target points
+         src_centroid=np.mean(source,axis=0)
+         tgt_centroid=np.mean(target[indices],axis=0)
+    
+        #Step 3: Center the points.
+         src_centered = source - src_centroid
+         tgt_centered = target[indices] - tgt_centroid
+    
+        # Step 4: Calculate the covariance matrix
+         H=np.dot(src_centered.T,tgt_centered)
+    
+        #Step 5: Singular Value Decomposition
+         U, S, Vt=np.linalg.svd(H)
+         R=np.dot(Vt.T,U.T)
+    
+        #Step 6: Calculate translation
+         t=tgt_centroid-np.dot(R,src_centroid)
+    
+        #Step 7: Update the source points
+         source=np.dot(source,R)+t
+    
+        #Check for convergence
+         if np.linalg.norm(t)<tolerance: #comparing the vector length with the convergence
+             break
+    
+    return source,R,t,indices,distances
+     
 
     
 def main():
