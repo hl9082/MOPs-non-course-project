@@ -88,6 +88,7 @@ def icp(source, target, max_iterations=100, tolerance=1e-6):
         numpy.ndarray: Rotation matrix.
         numpy.ndarray: Translation vector.
     """
+    prev_error = float('inf')
     for i in range(max_iterations):
          # Step 1: Find the closest points in the target for each point in the source
          tree=cKDTree(target)
@@ -107,16 +108,25 @@ def icp(source, target, max_iterations=100, tolerance=1e-6):
         #Step 5: Singular Value Decomposition
          U, S, Vt=np.linalg.svd(H)
          R=np.dot(Vt.T,U.T)
+         
+         # Ensure a proper rotation (det(R) = 1)
+         if np.linalg.det(R) < 0:
+             Vt[1, :] *= -1
+             R = np.dot(Vt.T, U.T)
     
         #Step 6: Calculate translation
          t=tgt_centroid-np.dot(R,src_centroid)
     
         #Step 7: Update the source points
          source=np.dot(source,R)+t
+         
+         # Compute mean squared error
+         mean_error = np.mean(np.linalg.norm(target[indices] - source, axis=1))
     
         #Check for convergence
-         if np.linalg.norm(t)<tolerance: #comparing the vector length with the convergence
+         if abs(prev_error - mean_error)<tolerance: #comparing the vector length with the convergence
              break
+         prev_error=mean_error
     
     return source,R,t,indices,distances
      
