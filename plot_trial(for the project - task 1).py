@@ -36,15 +36,18 @@ def plot_2_graphs(lower_x,lower_y,width,height,limit,angle):
     
     original_points=np.array([x1,y1])
     
-    plt.figure(figsize=(width, height))
+    fig,axs=plt.subplots(1,3,figsize=(width, height))
 
-    plt.subplot(1, 2, 1)
-    plt.scatter(x1, y1)
-    plt.plot(x1,y1,'--', 'o',color='blue')
-    plt.title('Original Scatter Plot')
-    plt.xlabel('X-axis')
-    plt.ylabel('Y-axis')
-    plt.grid(True)
+    #plt.subplot(1, 2, 1)
+    axs[0].scatter(x1, y1)
+    axs[0].plot(x1,y1,'--', 'o',color='blue')
+    axs[0].set_title('Original Scatter Plot')
+    axs[0].set_xlabel('X-axis')
+    axs[0].set_ylabel('Y-axis')
+    axs[0].grid(True)
+    #axs[0].set_xlim(lower_x,limit)
+    #axs[0].set_ylim(lower_y,limit)
+    #plt.legend()
     # Define the rotation angle in degrees
     
     theta = np.radians(angle)
@@ -61,15 +64,36 @@ def plot_2_graphs(lower_x,lower_y,width,height,limit,angle):
     x2 = rotated_data[lower_x, :] #it goes all columns in the row.
     y2 = rotated_data[lower_y, :]
 
-    plt.subplot(1, 2, 2)
-    plt.scatter(x2, y2)
-    plt.plot(x2,y2, '--', 'o',color='red')
-    plt.title('Rotated Scatter Plot')
-    plt.xlabel('X-axis')
-    plt.ylabel('Y-axis')
-    plt.grid(True)
+    #plt.subplot(1, 2, 2)
+    axs[1].scatter(x2, y2)
+    axs[1].plot(x2,y2, '--', 'o',color='red')
+    axs[1].set_title('Rotated Scatter Plot')
+    axs[1].set_xlabel('X-axis')
+    axs[1].set_ylabel('Y-axis')
+    axs[1].grid(True)
+    #axs[1].set_xlim(lower_x,limit)
+    #axs[1].set_ylim(lower_y,limit)
+    
+    
+    # Scatter plot 3: Original points and their corresponding rotated points
+    for original, rotated in zip(original_points, rotated_data):
+        axs[2].plot([original[0], rotated[0]], [original[1], rotated[1]], 'k--', alpha=0.5)  # Connecting line
+    axs[2].scatter(original_points[:, ], original_points[:, ], color='b', label='Original Points')
+    axs[2].scatter(rotated_data[:, ], rotated_data[:, ], color='r', label='Rotated Points')
+    axs[2].set_title('Original and Rotated Points with Connections')
+    axs[2].set_xlabel('X')
+    axs[2].set_ylabel('Y')
+    #axs[2].axis('equal')
+    axs[2].grid(True)
+    #axs[2].set_xlim(lower_x,limit)
+    #axs[2].set_ylim(lower_y,limit)
+        #plt.legend()
+    
+    
     plt.tight_layout()
     plt.show()
+    
+    
     aligned_points, rotation_matrix, translation_vector,indices,distances = icp(original_points, rotated_data)
     print("Original Points:\n",original_points)
     print("Rotated data:\n",rotated_data)
